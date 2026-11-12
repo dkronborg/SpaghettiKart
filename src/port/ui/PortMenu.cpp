@@ -351,6 +351,20 @@ void PortMenu::AddSettings() {
         .CVar(CVAR_CONTROLLER_CONFIGURATION_WINDOW_OPEN)
         .WindowName("Input Editor")
         .Options(ButtonOptions().Tooltip("Enables the separate Bindings Window.").Size(Sizes::Inline));
+    AddWidget(path, "Auto-assign controllers by connection order", WIDGET_CVAR_CHECKBOX)
+        .CVar(CVAR_CONTROLLER_AUTO_ASSIGN_PORTS)
+        .Callback([](WidgetInfo& info) {
+            Ship::Context::GetInstance()
+                ->GetControlDeck()
+                ->GetConnectedPhysicalDeviceManager()
+                ->RefreshConnectedSDLGamepads();
+        })
+        .Options(CheckboxOptions().Tooltip(
+            "Gives each gamepad its own port in the order they were connected: the first gamepad controls port 1, "
+            "the second port 2, and so on.\n\nA gamepad keeps its port while it stays connected. When one is "
+            "unplugged its port becomes free, and the next gamepad that connects takes the lowest free port. "
+            "Gamepads beyond the fourth are ignored until a port is free.\n\nKeyboard and mouse stay on port 1. "
+            "Ports 2-4 still need gamepad bindings (Set Defaults in the Bindings window)."));
 }
 int32_t motionBlurStrength;
 
